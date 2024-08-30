@@ -1,25 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from 'react';
+import { NewsContext, NewsProvider } from './Newscontext';
+import './App.css';  // Import the CSS file
+import items from './img-Desk.jpg'
 
-function App() {
+
+export const NewsList = () => {
+  const { currentItems } = useContext(NewsContext);
+
+  const onCardClickHandler = (id) => {
+
+     let data = currentItems.filter((items) => items.id !== id);
+
+     console.log(data, id);
+
+
+
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='upper_div'>
+      {currentItems.map((item) => (
+        <div key={item.id}>
+          <i className="fa fa-close" onClick={() => onCardClickHandler(item.id)}></i>
+
+          <h2>{item.title}</h2>
+          <p>{item.body}</p>
+          <img src={items} />
+        </div>
+      ))}
     </div>
   );
-}
+};
+
+export const Pagination = () => {
+  const { news, paginate, currentPage } = useContext(NewsContext);
+
+  return (
+    <div className="pagination">
+      {Array.from({ length: Math.ceil(news.length / 6) }, (_, index) => (
+        <button
+          key={index + 1}
+          onClick={() => paginate(index + 1)}
+          className={currentPage === index + 1 ? 'active' : ''}
+        >
+          {index + 1}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <NewsProvider>
+      <>
+        <NewsList />
+        <Pagination />
+      </>
+    </NewsProvider>
+  );
+};
 
 export default App;
